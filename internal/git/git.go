@@ -1,6 +1,9 @@
 package git
 
 import (
+	"fmt"
+	"os"
+	"os/exec"
 	"path"
 	"strings"
 )
@@ -15,6 +18,38 @@ func NormalizeURL(input string) string {
 		return input
 	}
 	return "https://" + input
+}
+
+// Clone runs git clone, placing the repo at targetPath.
+// git's stderr is passed through directly so the user sees progress.
+// Returns a clear error if git is not on PATH.
+func Clone(url, targetPath string) error {
+	gitPath, err := exec.LookPath("git")
+	if err != nil {
+		return fmt.Errorf("git not found on PATH")
+	}
+	cmd := exec.Command(gitPath, "clone", url, targetPath)
+	cmd.Stderr = os.Stderr
+	cmd.Stdout = os.Stdout
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("git clone failed: %w", err)
+	}
+	return nil
+}
+
+// ZoxideAdd registers path with zoxide.
+// Returns an error if zoxide is not on PATH or exits non-zero,
+// but callers should treat this as a warning, not a fatal error.
+func ZoxideAdd(path string) error {
+	zoxidePath, err := exec.LookPath("zoxide")
+	if err != nil {
+		return fmt.Errorf("zoxide not found on PATH")
+	}
+	cmd := exec.Command(zoxidePath, "add", path)
+	if out, err := cmd.CombinedOutput(); err != nil {
+		return fmt.Errorf("zoxide add: %s", out)
+	}
+	return nil
 }
 
 // RepoName derives the repository name from a URL.
