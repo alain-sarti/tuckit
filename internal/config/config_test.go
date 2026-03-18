@@ -8,6 +8,7 @@ import (
 )
 
 func TestLoad_envVarOnly(t *testing.T) {
+	t.Setenv("HOME", t.TempDir()) // isolate from real config file
 	t.Setenv("GCO_BASE_DIR", "/tmp/test-dev")
 	cfg, err := Load()
 	if err != nil {
@@ -25,19 +26,20 @@ func TestLoad_noConfig_returnsError(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error, got nil")
 	}
-	if !strings.Contains(err.Error(), "No base directory configured") {
+	if !strings.Contains(err.Error(), "no base directory configured") {
 		t.Errorf("unexpected error message: %v", err)
 	}
 }
 
 func TestLoad_tildeExpansion(t *testing.T) {
+	tmpHome := t.TempDir()
+	t.Setenv("HOME", tmpHome)
 	t.Setenv("GCO_BASE_DIR", "~/Dev")
 	cfg, err := Load()
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	home, _ := os.UserHomeDir()
-	expected := filepath.Join(home, "Dev")
+	expected := filepath.Join(tmpHome, "Dev")
 	if cfg.BaseDir != expected {
 		t.Errorf("got %q, want %q", cfg.BaseDir, expected)
 	}

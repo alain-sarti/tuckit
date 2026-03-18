@@ -39,7 +39,7 @@ func Load() (*Config, error) {
 	}
 
 	if baseDir == "" {
-		return nil, fmt.Errorf("No base directory configured. Set GCO_BASE_DIR or add base_dir to ~/.config/gco/config.toml")
+		return nil, fmt.Errorf("no base directory configured: set GCO_BASE_DIR or add base_dir to ~/.config/gco/config.toml")
 	}
 
 	expanded, err := expandTilde(baseDir)
