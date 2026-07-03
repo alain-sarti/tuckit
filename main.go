@@ -1,6 +1,6 @@
 package main
 
-import "github.com/asarti/gco/cmd"
+import "github.com/alain-sarti/tuckit/cmd"
 
 func main() {
 	cmd.Execute()

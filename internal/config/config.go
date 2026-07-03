@@ -19,7 +19,7 @@ type configFile struct {
 }
 
 // Load resolves the base directory from config file and environment.
-// GCO_BASE_DIR takes precedence over the config file value.
+// TUCKIT_BASE_DIR takes precedence over the config file value.
 // Returns an error if neither source provides a value.
 func Load() (*Config, error) {
 	baseDir := ""
@@ -34,12 +34,12 @@ func Load() (*Config, error) {
 	}
 
 	// Env var takes precedence
-	if env := os.Getenv("GCO_BASE_DIR"); env != "" {
+	if env := os.Getenv("TUCKIT_BASE_DIR"); env != "" {
 		baseDir = env
 	}
 
 	if baseDir == "" {
-		return nil, fmt.Errorf("no base directory configured: set GCO_BASE_DIR or add base_dir to ~/.config/gco/config.toml")
+		return nil, fmt.Errorf("no base directory configured: set TUCKIT_BASE_DIR or add base_dir to ~/.config/tuckit/config.toml")
 	}
 
 	expanded, err := expandTilde(baseDir)
@@ -55,7 +55,7 @@ func configFilePath() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return filepath.Join(home, ".config", "gco", "config.toml"), nil
+	return filepath.Join(home, ".config", "tuckit", "config.toml"), nil
 }
 
 func expandTilde(path string) (string, error) {

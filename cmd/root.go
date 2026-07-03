@@ -6,15 +6,15 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/asarti/gco/internal/config"
-	"github.com/asarti/gco/internal/git"
-	"github.com/asarti/gco/internal/tui"
+	"github.com/alain-sarti/tuckit/internal/config"
+	"github.com/alain-sarti/tuckit/internal/git"
+	"github.com/alain-sarti/tuckit/internal/tui"
 	"github.com/charmbracelet/huh"
 	"github.com/spf13/cobra"
 )
 
 var rootCmd = &cobra.Command{
-	Use:          "gco [url]",
+	Use:          "tuckit [url]",
 	Short:        "Clone a git repository into your base directory",
 	Args:         cobra.MaximumNArgs(1),
 	RunE:         run,

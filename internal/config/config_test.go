@@ -9,7 +9,7 @@ import (
 
 func TestLoad_envVarOnly(t *testing.T) {
 	t.Setenv("HOME", t.TempDir()) // isolate from real config file
-	t.Setenv("GCO_BASE_DIR", "/tmp/test-dev")
+	t.Setenv("TUCKIT_BASE_DIR", "/tmp/test-dev")
 	cfg, err := Load()
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -20,7 +20,7 @@ func TestLoad_envVarOnly(t *testing.T) {
 }
 
 func TestLoad_noConfig_returnsError(t *testing.T) {
-	t.Setenv("GCO_BASE_DIR", "")
+	t.Setenv("TUCKIT_BASE_DIR", "")
 	t.Setenv("HOME", t.TempDir()) // no config file in temp home
 	_, err := Load()
 	if err == nil {
@@ -34,7 +34,7 @@ func TestLoad_noConfig_returnsError(t *testing.T) {
 func TestLoad_tildeExpansion(t *testing.T) {
 	tmpHome := t.TempDir()
 	t.Setenv("HOME", tmpHome)
-	t.Setenv("GCO_BASE_DIR", "~/Dev")
+	t.Setenv("TUCKIT_BASE_DIR", "~/Dev")
 	cfg, err := Load()
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -48,12 +48,12 @@ func TestLoad_tildeExpansion(t *testing.T) {
 func TestLoad_envVarOverridesConfigFile(t *testing.T) {
 	// Write a config file in a temp HOME
 	tmpHome := t.TempDir()
-	cfgDir := filepath.Join(tmpHome, ".config", "gco")
+	cfgDir := filepath.Join(tmpHome, ".config", "tuckit")
 	os.MkdirAll(cfgDir, 0755)
 	os.WriteFile(filepath.Join(cfgDir, "config.toml"), []byte(`base_dir = "/from-file"`), 0644)
 
 	t.Setenv("HOME", tmpHome)
-	t.Setenv("GCO_BASE_DIR", "/from-env")
+	t.Setenv("TUCKIT_BASE_DIR", "/from-env")
 
 	cfg, err := Load()
 	if err != nil {
@@ -66,12 +66,12 @@ func TestLoad_envVarOverridesConfigFile(t *testing.T) {
 
 func TestLoad_configFileOnly(t *testing.T) {
 	tmpHome := t.TempDir()
-	cfgDir := filepath.Join(tmpHome, ".config", "gco")
+	cfgDir := filepath.Join(tmpHome, ".config", "tuckit")
 	os.MkdirAll(cfgDir, 0755)
 	os.WriteFile(filepath.Join(cfgDir, "config.toml"), []byte(`base_dir = "/from-file"`), 0644)
 
 	t.Setenv("HOME", tmpHome)
-	t.Setenv("GCO_BASE_DIR", "")
+	t.Setenv("TUCKIT_BASE_DIR", "")
 
 	cfg, err := Load()
 	if err != nil {
