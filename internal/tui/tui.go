@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/alain-sarti/tuckit/internal/git"
 	"github.com/charmbracelet/huh"
 )
 
@@ -33,6 +34,7 @@ func AskURL() (string, error) {
 	err := huh.NewInput().
 		Title("Git repository URL").
 		Placeholder("github.com/user/repo").
+		Validate(git.ValidateURL).
 		Value(&repoURL).
 		Run()
 	if err != nil {

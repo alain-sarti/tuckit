@@ -1,12 +1,30 @@
 package git
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
 	"path"
 	"strings"
 )
+
+// ValidateURL reports whether input is a usable git URL — non-empty and
+// yielding a real repository name. It rejects blank input and URLs from which
+// no meaningful name can be derived (which would otherwise resolve to the base
+// directory itself).
+func ValidateURL(input string) error {
+	trimmed := strings.TrimSpace(input)
+	if trimmed == "" {
+		return errors.New("repository URL is required")
+	}
+	name := RepoName(NormalizeURL(trimmed))
+	switch name {
+	case "", ".", "..", "/":
+		return fmt.Errorf("could not derive a repository name from %q", input)
+	}
+	return nil
+}
 
 // NormalizeURL ensures the URL has a protocol.
 // Short form (e.g. github.com/foo/bar) gets https:// prepended.
@@ -28,7 +46,8 @@ func Clone(url, targetPath string) error {
 	if err != nil {
 		return fmt.Errorf("git not found on PATH")
 	}
-	cmd := exec.Command(gitPath, "clone", url, targetPath)
+	// "--" stops git from interpreting a url or path as an option.
+	cmd := exec.Command(gitPath, "clone", "--", url, targetPath)
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
 	if err := cmd.Run(); err != nil {

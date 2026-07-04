@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -24,11 +25,16 @@ type configFile struct {
 func Load() (*Config, error) {
 	baseDir := ""
 
-	// Try config file first
+	// Try config file first. A missing file is fine (fall back to the env
+	// var); a malformed file is a real error worth reporting.
 	cfgPath, err := configFilePath()
 	if err == nil {
 		var cf configFile
-		if _, err := toml.DecodeFile(cfgPath, &cf); err == nil && cf.BaseDir != "" {
+		if _, derr := toml.DecodeFile(cfgPath, &cf); derr != nil {
+			if !errors.Is(derr, os.ErrNotExist) {
+				return nil, fmt.Errorf("reading %s: %w", cfgPath, derr)
+			}
+		} else if cf.BaseDir != "" {
 			baseDir = cf.BaseDir
 		}
 	}

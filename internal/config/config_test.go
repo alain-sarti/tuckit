@@ -64,6 +64,28 @@ func TestLoad_envVarOverridesConfigFile(t *testing.T) {
 	}
 }
 
+func TestLoad_malformedConfig_returnsError(t *testing.T) {
+	tmpHome := t.TempDir()
+	cfgDir := filepath.Join(tmpHome, ".config", "tuckit")
+	os.MkdirAll(cfgDir, 0755)
+	// Invalid TOML: unterminated string.
+	os.WriteFile(filepath.Join(cfgDir, "config.toml"), []byte(`base_dir = "unclosed`), 0644)
+
+	t.Setenv("HOME", tmpHome)
+	t.Setenv("TUCKIT_BASE_DIR", "")
+
+	_, err := Load()
+	if err == nil {
+		t.Fatal("expected error for malformed config file, got nil")
+	}
+	if strings.Contains(err.Error(), "no base directory configured") {
+		t.Errorf("malformed config should not be reported as missing config: %v", err)
+	}
+	if !strings.Contains(err.Error(), "config.toml") {
+		t.Errorf("error should name the config file: %v", err)
+	}
+}
+
 func TestLoad_configFileOnly(t *testing.T) {
 	tmpHome := t.TempDir()
 	cfgDir := filepath.Join(tmpHome, ".config", "tuckit")

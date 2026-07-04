@@ -25,6 +25,33 @@ func TestNormalizeURL(t *testing.T) {
 	}
 }
 
+func TestValidateURL(t *testing.T) {
+	valid := []string{
+		"github.com/foo/bar",
+		"https://github.com/foo/bar",
+		"https://github.com/foo/bar.git",
+		"git@github.com:foo/bar.git",
+		"  github.com/foo/bar  ", // surrounding whitespace is tolerated
+	}
+	for _, in := range valid {
+		if err := ValidateURL(in); err != nil {
+			t.Errorf("ValidateURL(%q) = %v, want nil", in, err)
+		}
+	}
+
+	invalid := []string{
+		"",         // empty
+		"   ",      // whitespace only
+		"https://", // no repository name
+		"/",        // no repository name
+	}
+	for _, in := range invalid {
+		if err := ValidateURL(in); err == nil {
+			t.Errorf("ValidateURL(%q) = nil, want error", in)
+		}
+	}
+}
+
 func TestRepoName(t *testing.T) {
 	cases := []struct {
 		input string
