@@ -16,6 +16,8 @@ func TestNormalizeURL(t *testing.T) {
 		{"https://github.com/foo/bar", "https://github.com/foo/bar"},
 		{"http://github.com/foo/bar", "http://github.com/foo/bar"},
 		{"git@github.com:foo/bar.git", "git@github.com:foo/bar.git"},
+		{"ssh://git@github.com/foo/bar.git", "ssh://git@github.com/foo/bar.git"},
+		{"git://github.com/foo/bar.git", "git://github.com/foo/bar.git"},
 	}
 	for _, tc := range cases {
 		got := NormalizeURL(tc.input)
@@ -31,6 +33,7 @@ func TestValidateURL(t *testing.T) {
 		"https://github.com/foo/bar",
 		"https://github.com/foo/bar.git",
 		"git@github.com:foo/bar.git",
+		"ssh://git@github.com/foo/bar.git",
 		"  github.com/foo/bar  ", // surrounding whitespace is tolerated
 	}
 	for _, in := range valid {
@@ -60,7 +63,9 @@ func TestRepoName(t *testing.T) {
 		{"https://github.com/foo/bar", "bar"},
 		{"https://github.com/foo/bar.git", "bar"},
 		{"git@github.com:foo/bar.git", "bar"},
-		{"git@github.com:bar.git", "bar"}, // single-level SSH path
+		{"git@github.com:bar.git", "bar"},                // single-level SSH path
+		{"ssh://git@github.com/foo/bar.git", "bar"},      // ssh scheme
+		{"ssh://git@github.com:2222/foo/bar.git", "bar"}, // ssh scheme with port
 		{"github.com/foo/bar", "bar"},
 	}
 	for _, tc := range cases {

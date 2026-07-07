@@ -28,11 +28,10 @@ func ValidateURL(input string) error {
 
 // NormalizeURL ensures the URL has a protocol.
 // Short form (e.g. github.com/foo/bar) gets https:// prepended.
-// SSH and full URLs are returned unchanged.
+// SCP-like SSH (git@…) and URLs that already carry a scheme
+// (https://, http://, ssh://, git://, …) are returned unchanged.
 func NormalizeURL(input string) string {
-	if strings.HasPrefix(input, "git@") ||
-		strings.HasPrefix(input, "https://") ||
-		strings.HasPrefix(input, "http://") {
+	if strings.HasPrefix(input, "git@") || strings.Contains(input, "://") {
 		return input
 	}
 	return "https://" + input
