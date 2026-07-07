@@ -1,5 +1,10 @@
 # tuckit
 
+[![CI](https://github.com/alain-sarti/tuckit/actions/workflows/ci.yml/badge.svg)](https://github.com/alain-sarti/tuckit/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/alain-sarti/tuckit)](https://github.com/alain-sarti/tuckit/releases/latest)
+[![Go Reference](https://pkg.go.dev/badge/github.com/alain-sarti/tuckit.svg)](https://pkg.go.dev/github.com/alain-sarti/tuckit)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 Clone a git repository into your base directory — and optionally register it with
 [zoxide](https://github.com/ajeetdsouza/zoxide) so you can jump to it instantly.
 
