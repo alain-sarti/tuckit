@@ -42,8 +42,9 @@ Clone by URL:
 tuckit github.com/alain-sarti/tuckit
 ```
 
-Short URLs get `https://` prepended automatically; SSH (`git@…`) and full
-`https://`/`http://` URLs are used as-is.
+Short URLs get `https://` prepended automatically; SCP-like SSH (`git@…`) and
+URLs that already carry a scheme (`https://`, `http://`, `ssh://`, `git://`) are
+used as-is.
 
 Run without a URL to be prompted for one:
 
@@ -52,7 +53,8 @@ tuckit
 ```
 
 On success `tuckit` prints the clone path, then asks whether to add it to zoxide.
-If the target directory already exists, it asks before continuing.
+If the target path is already occupied — a file, or a non-empty directory —
+`tuckit` stops with an error rather than touching it.
 
 ## License
 
