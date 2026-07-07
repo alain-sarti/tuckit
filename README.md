@@ -56,6 +56,10 @@ On success `tuckit` prints the clone path, then asks whether to add it to zoxide
 If the target path is already occupied — a file, or a non-empty directory —
 `tuckit` stops with an error rather than touching it.
 
+## Acknowledgements
+
+Parts of `tuckit` were written with the help of [Claude Code](https://www.anthropic.com/claude-code).
+
 ## License
 
 [MIT](LICENSE)
