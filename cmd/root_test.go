@@ -67,33 +67,33 @@ func TestVersionString_fallback(t *testing.T) {
 	}
 }
 
-func TestTargetAvailable(t *testing.T) {
-	t.Run("nonexistent path is available", func(t *testing.T) {
+func TestTargetOccupied(t *testing.T) {
+	t.Run("nonexistent path is not occupied", func(t *testing.T) {
 		target := filepath.Join(t.TempDir(), "does-not-exist")
-		ok, err := targetAvailable(target)
+		ok, err := targetOccupied(target)
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
-		if !ok {
-			t.Error("nonexistent path should be available")
+		if ok {
+			t.Error("nonexistent path should not be occupied")
 		}
 	})
 
-	t.Run("empty dir is available", func(t *testing.T) {
+	t.Run("empty dir is not occupied", func(t *testing.T) {
 		target := filepath.Join(t.TempDir(), "empty")
 		if err := os.Mkdir(target, 0755); err != nil {
 			t.Fatal(err)
 		}
-		ok, err := targetAvailable(target)
+		ok, err := targetOccupied(target)
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
-		if !ok {
-			t.Error("empty dir should be available")
+		if ok {
+			t.Error("empty dir should not be occupied")
 		}
 	})
 
-	t.Run("non-empty dir is unavailable", func(t *testing.T) {
+	t.Run("non-empty dir is occupied", func(t *testing.T) {
 		target := filepath.Join(t.TempDir(), "full")
 		if err := os.Mkdir(target, 0755); err != nil {
 			t.Fatal(err)
@@ -101,26 +101,26 @@ func TestTargetAvailable(t *testing.T) {
 		if err := os.WriteFile(filepath.Join(target, "f"), []byte("x"), 0644); err != nil {
 			t.Fatal(err)
 		}
-		ok, err := targetAvailable(target)
+		ok, err := targetOccupied(target)
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
-		if ok {
-			t.Error("non-empty dir should be unavailable")
+		if !ok {
+			t.Error("non-empty dir should be occupied")
 		}
 	})
 
-	t.Run("existing file is unavailable", func(t *testing.T) {
+	t.Run("existing file is occupied", func(t *testing.T) {
 		target := filepath.Join(t.TempDir(), "file")
 		if err := os.WriteFile(target, []byte("x"), 0644); err != nil {
 			t.Fatal(err)
 		}
-		ok, err := targetAvailable(target)
+		ok, err := targetOccupied(target)
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
-		if ok {
-			t.Error("existing file should be unavailable")
+		if !ok {
+			t.Error("existing file should be occupied")
 		}
 	})
 }
