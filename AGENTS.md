@@ -1,3 +1,17 @@
+## Checks
+
+Run this before calling a change done. It runs the same checks as CI and stops at the first failure:
+
+```sh
+golangci-lint run && go build ./... && go test ./...
+```
+
+- `golangci-lint run` lints and checks formatting. It runs gofmt, go vet, errcheck, staticcheck, ineffassign and unused, as configured in `.golangci.yml`. It needs golangci-lint v2. CI pins v2.15.0.
+- `go build` typechecks and compiles every package.
+- `go test` runs all tests.
+
+If you change this command, change `.github/workflows/ci.yml` to match, and the other way round.
+
 ## Agent skills
 
 ### Issue tracker
