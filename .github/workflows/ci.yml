@@ -9,6 +9,23 @@ permissions:
   contents: read
 
 jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+          cache: true
+
+      # Covers gofmt, go vet, errcheck, staticcheck, ineffassign and unused.
+      # Config lives in .golangci.yml. Keep the version in sync with AGENTS.md.
+      - uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.15.0
+
   test:
     name: test (${{ matrix.os }}, go ${{ matrix.go }})
     runs-on: ${{ matrix.os }}
@@ -25,18 +42,6 @@ jobs:
         with:
           go-version: ${{ matrix.go }}
           cache: true
-
-      - name: Check formatting
-        run: |
-          unformatted="$(gofmt -l .)"
-          if [ -n "$unformatted" ]; then
-            echo "These files are not gofmt-clean:"
-            echo "$unformatted"
-            exit 1
-          fi
-
-      - name: Vet
-        run: go vet ./...
 
       - name: Test
         run: go test ./...

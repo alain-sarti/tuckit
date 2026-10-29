@@ -54,25 +54,25 @@ func resolve(rawURL, baseDir string) (url, target string, err error) {
 	return url, target, nil
 }
 
-// targetAvailable reports whether a clone can be placed at target. git clone
-// refuses any existing file or non-empty directory, so those are unavailable;
-// a missing path or an empty directory is fine.
-func targetAvailable(target string) (bool, error) {
+// targetOccupied reports whether target is occupied. git clone refuses any
+// existing file or non-empty directory, so those are occupied; a missing path
+// or an empty directory is not.
+func targetOccupied(target string) (bool, error) {
 	info, err := os.Stat(target)
 	if errors.Is(err, os.ErrNotExist) {
-		return true, nil
+		return false, nil
 	}
 	if err != nil {
 		return false, err
 	}
 	if !info.IsDir() {
-		return false, nil
+		return true, nil
 	}
 	entries, err := os.ReadDir(target)
 	if err != nil {
 		return false, err
 	}
-	return len(entries) == 0, nil
+	return len(entries) > 0, nil
 }
 
 func run(cmd *cobra.Command, args []string) error {
@@ -103,13 +103,13 @@ func run(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	// Conflict check: git clone won't write into an occupied target.
-	avail, err := targetAvailable(targetPath)
+	// Occupied check: git clone won't write into an occupied target path.
+	occupied, err := targetOccupied(targetPath)
 	if err != nil {
 		return err
 	}
-	if !avail {
-		return fmt.Errorf("target already exists: %s", targetPath)
+	if occupied {
+		return fmt.Errorf("target path is occupied: %s", targetPath)
 	}
 
 	// Clone

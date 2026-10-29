@@ -49,8 +49,12 @@ func TestLoad_envVarOverridesConfigFile(t *testing.T) {
 	// Write a config file in a temp HOME
 	tmpHome := t.TempDir()
 	cfgDir := filepath.Join(tmpHome, ".config", "tuckit")
-	os.MkdirAll(cfgDir, 0755)
-	os.WriteFile(filepath.Join(cfgDir, "config.toml"), []byte(`base_dir = "/from-file"`), 0644)
+	if err := os.MkdirAll(cfgDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(cfgDir, "config.toml"), []byte(`base_dir = "/from-file"`), 0644); err != nil {
+		t.Fatal(err)
+	}
 
 	t.Setenv("HOME", tmpHome)
 	t.Setenv("TUCKIT_BASE_DIR", "/from-env")
@@ -67,9 +71,13 @@ func TestLoad_envVarOverridesConfigFile(t *testing.T) {
 func TestLoad_malformedConfig_returnsError(t *testing.T) {
 	tmpHome := t.TempDir()
 	cfgDir := filepath.Join(tmpHome, ".config", "tuckit")
-	os.MkdirAll(cfgDir, 0755)
+	if err := os.MkdirAll(cfgDir, 0755); err != nil {
+		t.Fatal(err)
+	}
 	// Invalid TOML: unterminated string.
-	os.WriteFile(filepath.Join(cfgDir, "config.toml"), []byte(`base_dir = "unclosed`), 0644)
+	if err := os.WriteFile(filepath.Join(cfgDir, "config.toml"), []byte(`base_dir = "unclosed`), 0644); err != nil {
+		t.Fatal(err)
+	}
 
 	t.Setenv("HOME", tmpHome)
 	t.Setenv("TUCKIT_BASE_DIR", "")
@@ -89,8 +97,12 @@ func TestLoad_malformedConfig_returnsError(t *testing.T) {
 func TestLoad_configFileOnly(t *testing.T) {
 	tmpHome := t.TempDir()
 	cfgDir := filepath.Join(tmpHome, ".config", "tuckit")
-	os.MkdirAll(cfgDir, 0755)
-	os.WriteFile(filepath.Join(cfgDir, "config.toml"), []byte(`base_dir = "/from-file"`), 0644)
+	if err := os.MkdirAll(cfgDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(cfgDir, "config.toml"), []byte(`base_dir = "/from-file"`), 0644); err != nil {
+		t.Fatal(err)
+	}
 
 	t.Setenv("HOME", tmpHome)
 	t.Setenv("TUCKIT_BASE_DIR", "")
